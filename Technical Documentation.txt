@@ -1,0 +1,61 @@
+Database:
+
+The database has six relations; Login, Admins, Offenses, Vehicles, People, and Fines.
+
+The Login and Admin relations are not related to each other or any other relations; they are simply used by the website to check login details.
+
+There is a one-to-many relationship between People and Vehicles. This assumes one person can own many vehicles but one vehicle can be owned by only one person.
+
+The Fines relation is an associative entity linking People, Offenses, and Vehicles. It allows a many to many relationship between people and offences. Fines shows each traffic violation that has occured.
+
+
+Website:
+
+The website is split into three pages: a login page (police_login.php), a main page (police_main.php), and a results page (police_results.php).
+
+To install the website, simply make sure the files 'police_login.php', 'police_main.php', and 'police_results.php' are in the same directory.
+
+The login page checks the Login relation. If it finds a match, it redirects to the main page, else it will check the Admin relation. If it finds a match, it redirects to the main page and passes a variable confirming admin status in the html.
+
+The main page displays a group of actions that the normal user is allowed to do. It uses the GET method to check for the admin variable. If it is found, javascript displays additional actions that the admin is allowed to choose. 
+
+Selecting an action displays the form for that action on the page. Each form passes its input to the results page.
+
+The makeList function on the main page creates a dropdown list for the user to select a field from the database.
+
+The results page has php which again connects to the database. For each form, it checks that all fields are populated with data. If so, an sql query specific to that form is sent to the database. If not, an error message is displayed asking users to ensure all fields are filled. If the query is successful, a confirmation message (or results in case of a search query) is displayed. If not an error message is displayed asking the user to resubmit the form as well as the error message returned by mysql.
+
+The license search is a simple SELECT FROM People WHERE LicenseNumber = [SEARCHTERM]. If the result is not empty, the php iterates through the array returned and echos each column to the page. 
+
+The vehicle plate search acts similarly to the license search, but left joins the People relation with the Vehicle relation to allow for a missing vehicle owner. 
+
+The 'add fine' sql updates the Amount field in the Fines relation where the personID, offenseID and Time values equal the ones provided by the admin. It assumes that no person commits the same offense twice in the same day.
+
+The sql to create a new officer simply inserts a new record into the Login table, containing the username and password.
+
+The sql to create a report varies depending on which forms are filled out:
+
+	-IF a vehicle is selected from a dropdown list:
+		The report along with the vehicle id is added to the `Fines` relation.
+
+	-ELSE IF the new vehicle form is filled in:
+
+		-IF a person is selected from the dropdown list:
+			The vehicle is added to the database and matched with the person id.
+			
+
+		-ELSE IF the new person form is filled in:
+			The person is added to the database.
+			The vehicle is added to the database and matched with the person id.
+			
+		The vehicle and person (as well as the rest of the report) are then added to Fines. 
+
+
+The sql to create a new vehicle again varies depending on which forms are filled out:
+
+	-IF a person is selected from the dropdown list:
+		The vehicle is added to the database and matched with the person id
+
+	-ELSE IF the new person form is filled in:
+		The person is added to the database
+		The vehicle is added to the database and matched with the person id.

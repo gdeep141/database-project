@@ -1,0 +1,215 @@
+--
+-- G54DIS - Database for Coursework 1C
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Login`
+--
+
+CREATE TABLE `Login` (
+  `Username` varchar(50),
+  `Password` varchar(50)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Login`
+--
+
+INSERT INTO `Login` (`Username`, `Password`) VALUES
+('regan', 'plod123'),
+('carter', 'fuzz42');
+
+--
+-- Table structure for `Admins`
+--
+
+CREATE TABLE `Admins` (
+  `Username` varchar(50),
+  `Password` varchar(50)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Admins`
+--
+
+INSERT INTO `Admins` (`Username`, `Password`) VALUES
+('haskins', 'copper99');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Fines`
+--
+
+CREATE TABLE `Fines` (
+  `VehicleID` varchar(50),
+  `PersonID` int(11),
+  `Time` date,
+  `Amount` decimal(8,2),
+  `OffenceID` int(11),
+  `OfficerStatement` varchar(255)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Fines`
+--
+
+INSERT INTO `Fines` (`VehicleID`, `PersonID`, `Time`, `Amount`, `OffenceID`, `OfficerStatement`) VALUES
+('NG51PKO', 1, '2015-10-11', '1200.00', 6, 'Pedestrian injured'),
+('PQR6465', 2, '2015-10-24', '400.00', 7, 'Jumped a red light'),
+('PQR6465', 2, '2015-11-09', '1000.00', 5, '85 on motorway'),
+('SFD43FH', 3, '2015-10-28', '500.00', 5, '45 in a 30 limit');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Offences`
+--
+
+CREATE TABLE `Offences` (
+  `OffenceID` int(11),
+  `Description` varchar(255),
+  `MaxFine` decimal(8,2)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Offences`
+--
+
+INSERT INTO `Offences` (`OffenceID`, `Description`, `MaxFine`) VALUES
+(1, 'Dangerous Driving', '10000.00'),
+(2, 'Failure to stop after an accident', '5000.00'),
+(3, 'Driving without due care and attention', '5000.00'),
+(4, 'Driving without insurance', '5000.00'),
+(5, 'Speeding', '2500.00'),
+(6, 'Use of a mobile phone while driving', '2500.00'),
+(7, 'Traffic light offences', '1000.00'),
+(8, 'Seat belt offences', '500.00'),
+(9, 'No MOT certificate', '500.00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `People`
+--
+
+CREATE TABLE `People` (
+  `PersonID` int(11),
+  `Name` varchar(255),
+  `Address` varchar(255),
+  `DOB` date,
+  `LicenseNumber` varchar(30),
+  `ExpiryDate` date
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `People`
+--
+
+INSERT INTO `People` (`PersonID`, `Name`, `Address`, `DOB`, `LicenseNumber`, `ExpiryDate`) VALUES
+(1, 'Rachel Smith', 'Wollaton', '1979-06-05', 'SG345PQ', '2020-05-05'),
+(2, 'Lewis Thomson', 'Nottingham', '1949-01-15', 'RW765FR', '2018-03-25'),
+(3, 'Jenna Reps', 'Nottingham', '1976-10-05', 'JR123DE', '2016-01-29'),
+(4, 'Daphne Lai', 'Leicester', '1980-08-13', 'DL890GB', '2017-06-24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Vehicles`
+--
+
+CREATE TABLE `Vehicles` (
+  `VehicleID` varchar(50),
+  `Make` varchar(255),
+  `Model` varchar(255),
+  `Colour` varchar(50),
+  `OwnerID` int(11)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Vehicles`
+--
+
+INSERT INTO `Vehicles` (`VehicleID`, `Make`, `Model`, `Colour`, `OwnerID`) VALUES
+('GHT56FN', 'Fiat', 'Punto', 'Blue', 4),
+('NG51PKO', 'Ford', 'fiesta', 'Grey', 1),
+('PQR6465', 'Audi', 'A4', 'Red', 2),
+('SFD43FH', 'Lancia', 'Thema', 'Blue', 3);
+
+--
+-- Indexes for dumped tables
+--
+
+
+--
+-- Indexes for table `Fines`
+--
+ALTER TABLE `Fines`
+  ADD PRIMARY KEY (`VehicleID`,`Time`,`OffenceID`),
+  ADD KEY `f_fk2` (`PersonID`),
+  ADD KEY `f_fk3` (`OffenceID`);
+
+--
+-- Indexes for table `Offences`
+--
+ALTER TABLE `Offences`
+  ADD PRIMARY KEY (`OffenceID`);
+
+--
+-- Indexes for table `People`
+--
+ALTER TABLE `People`
+  ADD PRIMARY KEY (`PersonID`);
+
+--
+-- Indexes for table `Login`
+--
+ALTER TABLE `Login`
+  ADD PRIMARY KEY (`Username`);
+
+--
+-- Indexes for table `Admins`
+--
+ALTER TABLE `Admins`
+  ADD PRIMARY KEY (`Username`);
+
+--
+-- Indexes for table `Vehicles`
+--
+ALTER TABLE `Vehicles`
+  ADD PRIMARY KEY (`VehicleID`),
+  ADD KEY `v_fk` (`OwnerID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `Offences`
+--
+ALTER TABLE `Offences`
+  MODIFY `OffenceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+--
+-- AUTO_INCREMENT for table `People`
+--
+ALTER TABLE `People`
+  MODIFY `PersonID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `Fines`
+--
+ALTER TABLE `Fines`
+  ADD CONSTRAINT `f_fk1` FOREIGN KEY (`VehicleID`) REFERENCES `Vehicles` (`VehicleID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `f_fk2` FOREIGN KEY (`PersonID`) REFERENCES `People` (`PersonID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `f_fk3` FOREIGN KEY (`OffenceID`) REFERENCES `Offences` (`OffenceID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `Vehicles`
+--
+ALTER TABLE `Vehicles`
+  ADD CONSTRAINT `v_fk` FOREIGN KEY (`OwnerID`) REFERENCES `People` (`PersonID`) ON DELETE CASCADE ON UPDATE CASCADE;
